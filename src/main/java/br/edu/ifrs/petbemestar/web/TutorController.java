@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,5 +43,18 @@ public class TutorController {
 	public ResponseEntity<Tutor> cadastrar(@RequestBody Tutor tutor) {
 		tutorDAO.salvar(tutor);
 		return ResponseEntity.status(HttpStatus.CREATED).body(tutor);
+	}
+
+	@PutMapping("/{id}")
+	public ResponseEntity<Tutor> atualizar(@PathVariable Long id, @RequestBody Tutor dados) {
+		Tutor existente = tutorDAO.buscarPorId(id);
+		if (existente == null) {
+			return ResponseEntity.notFound().build();
+		}
+		existente.setNome(dados.getNome());
+		existente.setTelefone(dados.getTelefone());
+		existente.setEmail(dados.getEmail());
+		tutorDAO.atualizar(existente);
+		return ResponseEntity.ok(existente);
 	}
 }
